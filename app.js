@@ -1,11 +1,7 @@
 const express = require('express');
-const AuthRoutes = require('./Routes/auth.routes');
-const PostRoutes = require('./Routes/post.routes');
+const AuthRoutes = require('./routes/auth.routes');
+const PostRoutes = require('./routes/post.routes');
 
-// connects to the db
-require('./db').connectToMongoDB()
-
-const PORT = 4001;
 
 const app = express();
 
@@ -21,12 +17,27 @@ app.get('/', (req, res) => {
     res.json({ message: 'Welcome to Feed App Api'})
 })
 
+// Handle asynchronous error using error middleware
+app.use((error, req, res, next) => {
+    console.log("Error Handling Middleware called")
+    console.log('Path: ', req.path)
+    console.error('Error: ', error)
+   
+    if (error.type == 'NOT_FOUND')
+        res.status(500).send(error)
+     else if (error.type == 'Not Found') // arbitrary condition check
+        res.status(404).send(error)
+    else {
+        res.status(500).send(error)
+    }
+
+    next() // next is required to call next middleware if any
+})
+
 app.get('*', (req, res) => {
     res.json({ message: 'Route not found', code: 404 })
 })
 
 
-app.listen(PORT, () => {
-    console.log(`App is running on ${PORT}`)
-})
 
+module.exports = app;

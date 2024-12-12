@@ -25,7 +25,10 @@ const GetPost = async (req, res) => {
 }
 const GetAllPost = async (req, res) => {
 
-    const serviceResponse = await PostService.GetAllPost();
+    const { user_id, text, page = 1, perPage = 10 } = req.query;
+    const serviceResponse = await PostService.GetAllPost({
+        user_id, text, page, perPage
+    });
 
     return res.status(serviceResponse.code).json(serviceResponse);
 }

@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
-const shortid = require('shortid')
+const shortid = require('shortid');
+const mongoosePaginate = require('mongoose-paginate-v2');
+
 
 
 const PostSchema = new mongoose.Schema({
@@ -9,6 +11,8 @@ const PostSchema = new mongoose.Schema({
     created_at: Date,
     update_at: Date,
 })
+
+PostSchema.plugin(mongoosePaginate);
 
 
 const PostModel = mongoose.model('post', PostSchema);

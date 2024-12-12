@@ -17,29 +17,53 @@ const CreatePost = async ({ text, user }) => {
     }
 }
 const GetPost = async ({ postId }) => {
-    const post = await PostModel.findOne({ _id: postId });
+    try {
+        const post = await PostModel.findOne({ _id: postId });
 
-    if (!post) {
+        if (!post) {
+            const error = new Error('Post not found')
+            error.type = 'NOT_FOUND';
+            throw error;
+            // return {
+            //     code: 404,
+            //     success: false,
+            //     message: 'Post not found',
+            //     data: null,
+            // }
+        }
+    
         return {
-            code: 404,
+            code: 200,
+            success: true,
+            message: 'Post found',
+            data: {
+                post
+            },
+        }
+    
+    } catch (error) {
+        return {
+            code: 500,
             success: false,
-            message: 'Post not found',
+            message: error.message || 'Server Error',
             data: null,
         }
     }
 
-    return {
-        code: 200,
-        success: true,
-        message: 'Post found',
-        data: {
-            post
-        },
+}
+const GetAllPost = async ({ user_id, text, page = 1, perPage = 10 }) => {
+
+    const query = { }
+
+    if (user_id) {
+        query.user_id = user_id // query = { user_id: user_id }
     }
 
-}
-const GetAllPost = async () => {
-    const posts = await PostModel.find();
+    if (text) {
+        query.text = {$regex : text } // query = { text: { $regex : text }}
+    }
+
+    const posts = await PostModel.paginate(query, { page, limit: perPage }) 
 
     return {
         code: 200,
