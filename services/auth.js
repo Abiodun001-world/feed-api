@@ -35,7 +35,6 @@ const Login = async ({ email, password }) => {
 };
 
 // Payload
-// { username: 'abiodun', password: 'abiodun123' email: 'abiodun@gmail' }
 // }
 
 const Signup = async ({ username, password, email }) => {
